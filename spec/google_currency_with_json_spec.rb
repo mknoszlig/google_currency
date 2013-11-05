@@ -32,12 +32,10 @@ describe "GoogleCurrency" do
       @bank.rates.should include('USD_TO_EUR')
     end
 
-    it "should handle complex rates" do
-      uri = double('uri')
-      @bank.stub(:build_uri){|from,to| uri }
-      uri.stub(:read) { %q({lhs: "1 Vietnamese dong",rhs: "4.8 \x26#215; 10\x3csup\x3e-5\x3c/sup\x3e U.S. dollars",error: "",icc: true}) }
-
-      @bank.get_rate('VND', 'USD').should == BigDecimal("0.48215105E1")
+    it "should raise UnknownRate error when rate is not known" do
+      expect {
+        @bank.get_rate('VND', 'USD')
+      }.to raise_error(Money::Bank::UnknownRate)
     end
   end
 
